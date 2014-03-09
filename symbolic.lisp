@@ -23,6 +23,11 @@
 	 (t `(,a ,',operator ,b))))
 
 ;;; Simplifying functions
+;; Infix
+(defun simple-sin (a b)
+  (simple-prefix a sin))
+
+;; Prefix
 (defun simple-+ (a b)
   (simple-infix (((zerop a) b) (t `(,a + ,b)))
 		(((zerop b) a) (t `(,a + ,b)))
@@ -47,9 +52,6 @@
   (simple-infix (((zerop a) 0) ((= a 1) 1) (t `(,a ^ ,b)))
 		(((zerop b) 1) ((= b 1) a) (t `(,a ^ ,b)))
 		a b ^))
-
-(defun simple-sin (a b)
-  (simple-prefix
 
 ;;; Derivative helper functions
 (defun delta-atom (atom wrt)
