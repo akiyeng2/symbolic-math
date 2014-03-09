@@ -7,6 +7,12 @@
 (defconstant i #C(0 1) "Imaginary Number")
 (setf (symbol-function '^) #'expt)
 
+;; Symbolic macros
+(defmacro simple-prefix (a operator &rest clauses)
+  `(cond ((numberp ,a) (,operator ,a))
+	 ,@clauses
+	 (t `(,',operator ,a))))
+
 (defmacro simple-infix (leftclauses rightclauses a b operator)
   `(cond ((and (numberp ,a) (numberp ,b))
 	  (,operator ,a ,b))
@@ -41,6 +47,9 @@
   (simple-infix (((zerop a) 0) ((= a 1) 1) (t `(,a ^ ,b)))
 		(((zerop b) 1) ((= b 1) a) (t `(,a ^ ,b)))
 		a b ^))
+
+(defun simple-sin (a b)
+  (simple-prefix
 
 ;;; Derivative helper functions
 (defun delta-atom (atom wrt)
