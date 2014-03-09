@@ -1,4 +1,4 @@
-symbolic-math: a lisp symbolic math package
+symbolic-math: a Lisp Symbolic Math Library
 ===========================================
 
 Introduction
