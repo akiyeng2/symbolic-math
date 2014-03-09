@@ -27,6 +27,27 @@
 (defun simple-sin (a)
   (simple-prefix a sin))
 
+(defun simple-cos (a)
+  (simple-prefix a cos))
+
+(defun simple-tan (a)
+  (simple-prefix a tan))
+
+(defun simple-cot (a)
+  (simple-prefix a cot))
+
+(defun simple-asin (a)
+  (simple-prefix a asin))
+
+(defun simple-acos (a)
+  (simple-prefix a acos))
+
+(defun simple-atan (a)
+  (simple-prefix a atan))
+
+(defun simple-acot (a)
+  (simple-prefix a acot))
+
 ;; Prefix
 (defun simple-+ (a b)
   (simple-infix (((zerop a) b) (t `(,a + ,b)))
