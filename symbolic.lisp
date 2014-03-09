@@ -11,7 +11,7 @@
 	 ,@clauses
 	 (t `(,',operator ,a))))
 
-(defmacro simple-infix (leftclauses rightclauses a b operator)
+(defmacro simple-infix (a b operator leftclauses rightclauses)
   `(cond ((and (numberp ,a) (numberp ,b))
 	  (,operator ,a ,b))
 	 ((numberp ,a)
@@ -74,29 +74,29 @@
 
 ;; Prefix
 (defun simple-+ (a b)
-  (simple-infix (((zerop a) b) (t `(,a + ,b)))
-		(((zerop b) a) (t `(,a + ,b)))
-		a b +))
+  (simple-infix a b +
+		(((zerop a) b) (t `(,a + ,b)))
+		(((zerop b) a) (t `(,a + ,b)))))
 
 (defun simple-- (b &optional (a 0))
-  (simple-infix (((zerop a) `(- ,b)) (t `(,a - ,b)))
-		(((zerop b) a) (t `(,a - ,b)))
-		a b -))
+  (simple-infix a b -
+		(((zerop a) `(- ,b)) (t `(,a - ,b)))
+		(((zerop b) a) (t `(,a - ,b)))))
 
 (defun simple-* (a b)
-  (simple-infix (((zerop a) 0) ((= a 1) b) (t `(,a * ,b)))
-		(((zerop b) 0) ((= b 1) a) (t `(,a * ,b)))
-		a b *))
+  (simple-infix a b *
+		(((zerop a) 0) ((= a 1) b) (t `(,a * ,b)))
+		(((zerop b) 0) ((= b 1) a) (t `(,a * ,b)))))
 
 (defun simple-/ (a b)
-  (simple-infix (((zerop a) 0) (t `(,a / ,b)))
-		((t `(,a / ,b)))
-		a b /))
+  (simple-infix a b /
+		(((zerop a) 0) (t `(,a / ,b)))
+		((t `(,a / ,b)))))
 
 (defun simple-^ (a b)
-  (simple-infix (((zerop a) 0) ((= a 1) 1) (t `(,a ^ ,b)))
-		(((zerop b) 1) ((= b 1) a) (t `(,a ^ ,b)))
-		a b ^))
+  (simple-infix a b ^
+		(((zerop a) 0) ((= a 1) 1) (t `(,a ^ ,b)))
+		(((zerop b) 1) ((= b 1) a) (t `(,a ^ ,b)))))
 
 ;;; Derivative helper functions
 (defun delta-atom (atom wrt)
