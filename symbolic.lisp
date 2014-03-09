@@ -84,7 +84,7 @@
   (cond ((atom expression)
 	 (delta-atom expression wrt))
 	((eql (first expression) '-)
-	 (delta-- '(0 - ,(second expression)) wrt))
+	 (delta-- `(0 - ,(second expression)) wrt))
 	((eql (second expression) '+)
 	 (delta-+ expression wrt))
 	((eql (second expression) '-)
