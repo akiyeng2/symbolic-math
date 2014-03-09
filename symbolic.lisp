@@ -119,7 +119,3 @@
      (delta-/ expression wrt))
     ((eql (second expression) '^)
      (delta-^ expression wrt))))
-     
-    
-	
-  
