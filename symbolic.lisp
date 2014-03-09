@@ -9,12 +9,12 @@
 
 (defmacro simple-infix (leftclauses rightclauses a b operator)
   `(cond ((and (numberp ,a) (numberp ,b))
-	 (,operator ,a ,b))
-	((numberp ,a)
-	 (cond ,@leftclauses)
-	((numberp ,b)
-	 (cond ,@rightclauses)))
-	(t ,`(,a ',operator ,b))))
+	  (,operator ,a ,b))
+	 ((numberp ,a)
+	  (cond ,@leftclauses))
+	 ((numberp ,b)
+	  (cond ,@rightclauses))
+	 (t `,(,a ',operator ,b))))
 
 ;;; Simplifying functions
 (defun simple-+ (a b)
