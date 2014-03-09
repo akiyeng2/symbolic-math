@@ -9,7 +9,7 @@ Compiling & Loading
 -------------------
 To load this library, open a lisp interpreter and type `(load "symbolic.lisp")`
 
-If you load this library often, you may choose to compile the library with `(compile "symbolic.lisp)` and load the following `.fas` or `.fasl`. Check your lisp implementation for more details.
+If you load this library often, you may choose to compile the library with `(compile-file "symbolic.lisp)` and load the following `.fas` or `.fasl`. Check your lisp implementation for more details.
 
 Usage
 -----
