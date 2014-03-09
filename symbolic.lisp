@@ -59,6 +59,12 @@
     (simple-+ (simple-* (delta a wrt) b)
 	      (simple-* (delta b wrt) a))))
 
+(defun delta-/ (/-list wrt)
+  (let ((a (first /-list)) (b (third /-list)))
+    (simple-/ (simple-- (simple-* (delta a wrt) b)
+			(simple-* (delta b wrt) a))
+	      (simple-^ b 2))))
+
 (defun delta-power (power-list wrt)
   (let ((a (first power-list)) (b (third power-list)))
     (simple-* (delta a wrt)
