@@ -24,7 +24,7 @@
 
 ;;; Simplifying functions
 ;; Infix
-(defun simple-sin (a b)
+(defun simple-sin (a)
   (simple-prefix a sin))
 
 ;; Prefix
