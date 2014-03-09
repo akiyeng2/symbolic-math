@@ -14,7 +14,7 @@
 	  (cond ,@leftclauses))
 	 ((numberp ,b)
 	  (cond ,@rightclauses))
-	 (t `,(,a ',operator ,b))))
+	 (t (,a ',operator ,b))))
 
 ;;; Simplifying functions
 (defun simple-+ (a b)
