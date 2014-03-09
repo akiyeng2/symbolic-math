@@ -18,8 +18,8 @@
 
 ;;; Simplifying functions
 (defun simple-+ (a b)
-  (simple-infix (((zerop a) 0) (t `(,a + ,b)))
-		(((zerop b) 0) (t `(,a + ,b)))
+  (simple-infix (((zerop a) b) (t `(,a + ,b)))
+		(((zerop b) a) (t `(,a + ,b)))
 		a b +))
 
 (defun simple-- (a b)
