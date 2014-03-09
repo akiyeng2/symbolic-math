@@ -67,7 +67,7 @@
 (defun delta-exp (exp-list wrt)
   (let ((a (first exp-list)) (b (third exp-list)))
     (simple-* (delta b wrt)
-	      (simple-* (list 'log a) (simple-^ a b)))))
+	      (simple-* `(log ,a) (simple-^ a b)))))
 
 (defun delta-^ (^-list wrt)
   (simple-+ (delta-power ^-list wrt)
