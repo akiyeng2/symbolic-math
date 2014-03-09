@@ -1,7 +1,5 @@
 ;;;; Some symbolic algebra in infix notation
 
-;;; TODO: Write a macro to auto-gen code for simple- functions.
-
 ;;; Set constants and aliases to functions
 (defconstant e (exp 1) "Euler's Number")  
 (defconstant i #C(0 1) "Imaginary Number")
@@ -24,6 +22,7 @@
 
 ;;; Simplifying functions
 ;; Infix
+; Trignometric
 (defun simple-sin (a)
   (simple-prefix a sin))
 
@@ -47,6 +46,31 @@
 
 (defun simple-acot (a)
   (simple-prefix a acot))
+
+; Hyperbolic
+(defun simple-sinh (a)
+  (simple-prefix a sinh))
+
+(defun simple-cosh (a)
+  (simple-prefix a cosh))
+
+(defun simple-tanh (a)
+  (simple-prefix a tanh))
+
+(defun simple-coth (a)
+  (simple-prefix a coth))
+
+(defun simple-asinh (a)
+  (simple-prefix a asinh))
+
+(defun simple-acosh (a)
+  (simple-prefix a acosh))
+
+(defun simple-atanh (a)
+  (simple-prefix a atanh))
+
+(defun simple-acoth (a)
+  (simple-prefix a acoth))
 
 ;; Prefix
 (defun simple-+ (a b)
