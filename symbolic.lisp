@@ -28,7 +28,7 @@
 (defun simple-log (a)
   (simple-prefix a log))
 
-; Trignometric
+; Trigonometric
 (defun simple-sin (a)
   (simple-prefix a sin))
 
