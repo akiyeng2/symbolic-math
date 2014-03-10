@@ -24,6 +24,10 @@
 
 ;;; Simplifying functions
 ;; Infix
+; Logarithmic
+(defun simple-log (a)
+  (simple-prefix a log))
+
 ; Trignometric
 (defun simple-sin (a)
   (simple-prefix a sin))
@@ -175,7 +179,7 @@
   (let ((a (second acosh-list)))
     (simple-* (delta a wrt)
 	      (simple-/ 1 (simple-* (simple-^ (simple-- a 1) 1/2)
-				    (simple-^ (simple-+ a 1) 1.2))))))
+				    (simple-^ (simple-+ a 1) 1/2))))))
 
 (defun delta-atanh (atanh-list wrt)
   (let ((a (second atanh-list)))
