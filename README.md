@@ -13,6 +13,9 @@ If you load this library often, you may choose to compile the library with `(com
 
 Usage
 -----
-Symbolic evaluation of addition, subtraction, multiplication, division as well as the trigonemtric and hyperbolic functions are supported with the `simple-*function*` functions.
- 
-Differentiation is supported with the `delta` function.
+Symbolic evaluation of functions is supported by `simple-` functions.
+Differentiation is supported by the `delta` function.
+
+Supported Functions
+-------------------
+All elementary functions are currently implemented.
