@@ -13,6 +13,6 @@ If you load this library often, you may choose to compile the library with `(com
 
 Usage
 -----
-Symbolic evaluation of addition, subtraction, multiplication and division are supported with the `simple-+`. `simple--`, `simple-*` and `simplify-/` functions.
+Symbolic evaluation of addition, subtraction, multiplication, division as well as the trigonemtric and hyperbolic functions are supported with the `simple-*function*` functions.
  
 Differentiation is supported with the `delta` function.
