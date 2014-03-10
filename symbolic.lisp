@@ -32,9 +32,6 @@
 (defun simple-tan (a)
   (simple-prefix a tan))
 
-(defun simple-cot (a)
-  (simple-prefix a cot))
-
 (defun simple-asin (a)
   (simple-prefix a asin))
 
@@ -43,9 +40,6 @@
 
 (defun simple-atan (a)
   (simple-prefix a atan))
-
-(defun simple-acot (a)
-  (simple-prefix a acot))
 
 ; Hyperbolic
 (defun simple-sinh (a)
@@ -57,9 +51,6 @@
 (defun simple-tanh (a)
   (simple-prefix a tanh))
 
-(defun simple-coth (a)
-  (simple-prefix a coth))
-
 (defun simple-asinh (a)
   (simple-prefix a asinh))
 
@@ -68,9 +59,6 @@
 
 (defun simple-atanh (a)
   (simple-prefix a atanh))
-
-(defun simple-acoth (a)
-  (simple-prefix a acoth))
 
 ;; Prefix
 (defun simple-+ (a b)
