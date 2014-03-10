@@ -78,7 +78,7 @@
 		(((zerop a) b) (t `(,a + ,b)))
 		(((zerop b) a) (t `(,a + ,b)))))
 
-(defun simple-- (b &optional (a 0))
+(defun simple-- (a b)
   (simple-infix a b -
 		(((zerop a) `(- ,b)) (t `(,a - ,b)))
 		(((zerop b) a) (t `(,a - ,b)))))
