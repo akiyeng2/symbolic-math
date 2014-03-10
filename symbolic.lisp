@@ -129,6 +129,10 @@
   (simple-+ (delta-power ^-list wrt)
 	    (delta-exp ^-list wrt)))
 
+(defun delta-log (log-list wrt)
+  (let ((a (second log-list)))
+    (simple-* (delta a wrt) (simple-/ 1 a))))
+
 (defun delta-sin (sin-list wrt)
   (let ((a (second sin-list)))
     (simple-* (delta a wrt) (simple-cos a))))
@@ -204,6 +208,8 @@
 	 (delta-/ expression wrt))
 	((eql (second expression) '^)
 	 (delta-^ expression wrt))
+	((eql (first expression) 'log)
+	 (delta-log expression wrt))
 	((eql (first expression) 'sin)
 	 (delta-sin expression wrt))
 	((eql (first expression) 'cos)
