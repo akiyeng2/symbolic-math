@@ -1,5 +1,7 @@
 ;;;; Some symbolic algebra in infix notation
 
+;; TODO: write a macro to autogen delta code
+
 ;;; Set constants and aliases to functions
 (defconstant e (exp 1) "Euler's Number")  
 (defconstant i #C(0 1) "Imaginary Number")
@@ -123,6 +125,34 @@
   (simple-+ (delta-power ^-list wrt)
 	    (delta-exp ^-list wrt)))
 
+(defun delta-sin (sin-list wrt)
+  (let ((a (second sin-list)))
+    (simple-* (delta a wrt) (simple-cos a))))
+
+(defun delta-cos (cos-list wrt)
+  (let ((a (second cos-list)))
+    (simple-* (delta a wrt) (simple-- 0 (simple-sin a)))))
+
+(defun delta-tan (tan-list wrt)
+  (let ((a (second tan-list)))
+    (simple-* (delta a wrt)
+	      (simple-/ 1 (simple-^ (simple-cos a) 2)))))
+
+(defun delta-asin (asin-list wrt)
+  (let ((a (second asin-list)))
+    (simple-* (delta a wrt)
+	      (simple-/ 1 (simple-^ (simple-- 1 (simple-^ a 2)) 1/2)))))
+
+(defun delta-acos (acos-list wrt)
+  (let ((a (second acos-list)))
+    (simple-* (delta a wrt)
+	      (simple-- 0 (simple-/ 1 (simple-^ (simple-- 1 (simple-^ a 2)) 1/2))))))
+
+(defun delta-atan (atan-list wrt)
+  (let ((a (second atan-list)))
+    (simple-* (delta a wrt)
+	      (simple-/ 1 (simple-+ 1 (simple-^ a 2))))))
+
 ;;; Derivative taker
 (defun delta (expression wrt)
   (cond ((atom expression)
@@ -138,4 +168,16 @@
 	((eql (second expression) '/)
 	 (delta-/ expression wrt))
 	((eql (second expression) '^)
-	 (delta-^ expression wrt))))
+	 (delta-^ expression wrt))
+	((eql (first expression) 'sin)
+	 (delta-sin expression wrt))
+	((eql (first expression) 'cos)
+	 (delta-cos expression wrt))
+	((eql (first expression) 'tan)
+	 (delta-tan expression wrt))
+	((eql (first expression) 'asin)
+	 (delta-asin expression wrt))
+	((eql (first expression) 'acos)
+	 (delta-acos expression wrt))
+	((eql (first expression) 'atan)
+	 (delta-atan expression wrt))))
