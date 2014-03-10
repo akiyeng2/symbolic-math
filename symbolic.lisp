@@ -153,6 +153,35 @@
     (simple-* (delta a wrt)
 	      (simple-/ 1 (simple-+ 1 (simple-^ a 2))))))
 
+(defun delta-sinh (sinh-list wrt)
+  (let ((a (second sinh-list)))
+    (simple-* (delta a wrt) (simple-cosh a))))
+
+(defun delta-cosh (cosh-list wrt)
+  (let ((a (second cosh-list)))
+    (simple-* (delta a wrt) (simple-sinh a))))
+
+(defun delta-tanh (tanh-list wrt)
+  (let ((a (second tanh-list)))
+    (simple-* (delta a wrt)
+	      (simple-/ 1 (simple-^ (simple-cosh a) 2)))))
+
+(defun delta-asinh (asinh-list wrt)
+  (let ((a (second asinh-list)))
+    (simple-* (delta a wrt)
+	      (simple-/ 1 (simple-^ (simple-+ 1 (simple-^ a 2)) 1/2)))))
+
+(defun delta-acosh (acosh-list wrt)
+  (let ((a (second acosh-list)))
+    (simple-* (delta a wrt)
+	      (simple-/ 1 (simple-* (simple-^ (simple-- a 1) 1/2)
+				    (simple-^ (simple-+ a 1) 1.2))))))
+
+(defun delta-atanh (atanh-list wrt)
+  (let ((a (second atanh-list)))
+    (simple-* (delta a wrt)
+	      (simple-/ 1 (simple-- 1 (simple-^ a 1/2))))))
+
 ;;; Derivative taker
 (defun delta (expression wrt)
   (cond ((atom expression)
@@ -182,4 +211,16 @@
 	((eql (first expression) 'acos)
 	 (delta-acos expression wrt))
 	((eql (first expression) 'atan)
-	 (delta-atan expression wrt))))
+	 (delta-atan expression wrt))
+	((eql (first expression) 'sinh)
+	 (delta-sinh expression wrt))
+	((eql (first expression) 'cosh)
+	 (delta-cosh expression wrt))
+	((eql (first expression) 'tanh)
+	 (delta-tanh expression wrt))
+	((eql (first expression) 'asinh)
+	 (delta-asinh expression wrt))
+	((eql (first expression) 'acosh)
+	 (delta-acosh expression wrt))
+	((eql (first expression) 'atanh)
+	 (delta-atanh expression wrt))))
