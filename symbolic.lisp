@@ -157,6 +157,8 @@
 (defun delta (expression wrt)
   (cond ((atom expression)
 	 (delta-atom expression wrt))
+	((null (rest expression))
+	 (delta (first expression) wrt))
 	((eql (first expression) '-)
 	 (delta-- `(0 - ,(second expression)) wrt))
 	((eql (second expression) '+)
