@@ -13,15 +13,13 @@
 	 ,@clauses
 	 (t `(,',operator ,a))))
 
-(defmacro simple-infix (a b operator clauses-one clauses-two clauses-three)
+(defmacro simple-infix (a b operator clauses-one clauses-two)
   `(cond ((and (numberp ,a) (numberp ,b))
 	  (,operator ,a ,b))
 	 ((numberp ,a)
 	  (cond ,@clauses-one))
 	 ((numberp ,b)
 	  (cond ,@clauses-two))
-	 ((eql a b)
-	  (cond ,@clauses-three)) 
 	 (t `(,a ,',operator ,b))))
 
 ;;; Simplifying functions
