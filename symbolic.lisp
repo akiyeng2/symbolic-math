@@ -5,7 +5,13 @@
 ;;; Set constants and aliases to functions
 (defconstant e (exp 1) "Euler's Number")  
 (defconstant i #C(0 1) "Imaginary Number")
-(setf (symbol-function '^) #'expt)
+(defun ^ (a b) (expt a b))
+
+(defparameter op '((+ 1) (- 1) (* 1) (/ 1) (^ 1)
+		   (log 0) (sin 0) (cos 0) (tan 0)
+		   (sinh 0) (cosh 0) (tanh 0)
+		   (asin 0) (acos 0) (atan 0)
+		   (asinh 0) (acosh 0) (atanh 0)))
 
 ;; Symbolic macros
 (defmacro simple-prefix (a operator &rest clauses)
@@ -22,6 +28,9 @@
 	  (cond ,@clauses-two))
 	 (t `(,a ,',operator ,b))))
 
+(defun delta-op (op)
+  (read-from-string (concatenate 'string "delta-" (string op))))
+ 
 ;;; Simplifying functions
 ;; Infix
 ; Logarithmic
@@ -192,45 +201,20 @@
 
 ;;; Derivative taker
 (defun delta (expression wrt)
-  (cond ((atom expression)
-	 (delta-atom expression wrt))
-	((null (rest expression))
-	 (delta (first expression) wrt))
-	((eql (first expression) '-)
-	 (delta-- `(0 - ,(second expression)) wrt))
-	((eql (second expression) '+)
-	 (delta-+ expression wrt))
-	((eql (second expression) '-)
-	 (delta-- expression wrt))
-	((eql (second expression) '*)
-	 (delta-* expression wrt))
-	((eql (second expression) '/)
-	 (delta-/ expression wrt))
-	((eql (second expression) '^)
-	 (delta-^ expression wrt))
-	((eql (first expression) 'log)
-	 (delta-log expression wrt))
-	((eql (first expression) 'sin)
-	 (delta-sin expression wrt))
-	((eql (first expression) 'cos)
-	 (delta-cos expression wrt))
-	((eql (first expression) 'tan)
-	 (delta-tan expression wrt))
-	((eql (first expression) 'asin)
-	 (delta-asin expression wrt))
-	((eql (first expression) 'acos)
-	 (delta-acos expression wrt))
-	((eql (first expression) 'atan)
-	 (delta-atan expression wrt))
-	((eql (first expression) 'sinh)
-	 (delta-sinh expression wrt))
-	((eql (first expression) 'cosh)
-	 (delta-cosh expression wrt))
-	((eql (first expression) 'tanh)
-	 (delta-tanh expression wrt))
-	((eql (first expression) 'asinh)
-	 (delta-asinh expression wrt))
-	((eql (first expression) 'acosh)
-	 (delta-acosh expression wrt))
-	((eql (first expression) 'atanh)
-	 (delta-atanh expression wrt))))
+  (cond 
+    ((atom expression)
+     (delta-atom expression wrt))
+    ((null (rest expression))
+     (delta (first expression) wrt))
+    ((eql (first expression) '-)
+     (delta-- `(0 - ,(second expression)) wrt))
+    (t
+     (dolist (pair op)
+       (when (eql (first pair) (nth (second pair) expression))
+	 (return
+	   (funcall (delta-op (first pair)) expression wrt)))))))
+
+	
+
+
+
