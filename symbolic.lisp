@@ -23,36 +23,16 @@
 		      (acosh (/ (^ (* (- x 1) (+ x 1)) 1/2)))
 		      (atanh (/ (- 1 (^ x 2)))) (log (/ x))))
 
-;; Symbolic macros
-(defmacro simple-infix (a b operator clauses-one clauses-two)
-  `(cond ((and (numberp ,a) (numberp ,b))
-	  (,operator ,a ,b))
-	 ((numberp ,a)
-	  (cond ,@clauses-one))
-	 ((numberp ,b)
-	  (cond ,@clauses-two))
-	 (t `(,a ,',operator ,b))))
+(defun simple-infix (a b operator clauses-one clauses-two)
+  (cond ((and (numberp a) (numberp b))
+	  `(,operator ,a ,b))
+	 ((numberp a)
+	  (cond `@clauses-one))
+	 ((numberp b)
+	  (cond `@clauses-two))
+	 (t `(,a ,operator ,b))))
  
 ;;; Simplifying functions
-(defun simple-prefix (operator a)
-  (cond ((numberp a) (funcall operator a))
-	(t `(,operator ,a))))
-
-(defun simplify (expr)
-  (dolist (pair op)
-    (when (atom expr) (return expr))
-    (when (eql (first pair) (first expr))
-      (return (simple (first expr) (simplify (second expr))
-		      (simplify (third expr)))))))
-
-(defun simple (operator a &optional (b nil))
-  (cond ((eq operator '+) (simple-+ a b))
-	((eq operator '-) (simple-- a b))
-	((eq operator '*) (simple-* a b))
-	((eq operator '/) (simple-/ a b))
-	((eq operator '^) (simple-^ a b))
-	(t (simple-prefix operator a))))
-
 (defun simple-+ (a b)
   (simple-infix a b +
 		(((zerop a) b) (t `(,a + ,b)))
@@ -77,6 +57,25 @@
   (simple-infix a b ^
 		(((zerop a) 0) ((= a 1) 1) (t `(,a ^ ,b)))
 		(((zerop b) 1) ((= b 1) a) (t `(,a ^ ,b)))))
+
+(defun simple-prefix (operator a)
+  (cond ((numberp a) (funcall operator a))
+	(t `(,operator ,a))))
+
+(defun simple (operator a &optional (b nil))
+  (cond ((eq operator '+) (simple-+ a b))
+	((eq operator '-) (simple-- a b))
+	((eq operator '*) (simple-* a b))
+	((eq operator '/) (simple-/ a b))
+	((eq operator '^) (simple-^ a b))
+	(t (simple-prefix operator a))))
+
+(defun simplify (expr)
+  (dolist (pair op)
+    (when (atom expr) (return expr))
+    (when (eql (first pair) (first expr))
+      (return (simple (first expr) (simplify (second expr))
+		      (simplify (third expr)))))))
 
 ;;; Derivative helper functions
 (defun delta-atom (atom wrt)
