@@ -1,6 +1,6 @@
 ;;;; Some symbolic algebra in infix notation
 
-;; TODO: write a macro to autogen delta code
+;; Fix clashes
 
 ;;; Set constants and aliases to functions
 (defconstant e (exp 1) "Euler's Number")  
@@ -13,12 +13,10 @@
 		   (asin 0) (acos 0) (atan 0)
 		   (asinh 0) (acosh 0) (atanh 0)))
 
-;; Symbolic macros
-(defmacro simple-prefix (a operator &rest clauses)
-  `(cond ((numberp ,a) (,operator ,a))
-	 ,@clauses
-	 (t `(,',operator ,a))))
+(defun delta-op (op)
+  (read-from-string (concatenate 'string "delta-" (string op))))
 
+;; Symbolic macros
 (defmacro simple-infix (a b operator clauses-one clauses-two)
   `(cond ((and (numberp ,a) (numberp ,b))
 	  (,operator ,a ,b))
@@ -27,55 +25,12 @@
 	 ((numberp ,b)
 	  (cond ,@clauses-two))
 	 (t `(,a ,',operator ,b))))
-
-(defun delta-op (op)
-  (read-from-string (concatenate 'string "delta-" (string op))))
  
 ;;; Simplifying functions
-;; Infix
-; Logarithmic
-(defun simple-log (a)
-  (simple-prefix a log))
+(defun simple (operator a &optional (b nil))
+  (cond ((numberp a) (funcall operator a))
+	(t '(operator a))))
 
-; Trigonometric
-(defun simple-sin (a)
-  (simple-prefix a sin))
-
-(defun simple-cos (a)
-  (simple-prefix a cos))
-
-(defun simple-tan (a)
-  (simple-prefix a tan))
-
-(defun simple-asin (a)
-  (simple-prefix a asin))
-
-(defun simple-acos (a)
-  (simple-prefix a acos))
-
-(defun simple-atan (a)
-  (simple-prefix a atan))
-
-; Hyperbolic
-(defun simple-sinh (a)
-  (simple-prefix a sinh))
-
-(defun simple-cosh (a)
-  (simple-prefix a cosh))
-
-(defun simple-tanh (a)
-  (simple-prefix a tanh))
-
-(defun simple-asinh (a)
-  (simple-prefix a asinh))
-
-(defun simple-acosh (a)
-  (simple-prefix a acosh))
-
-(defun simple-atanh (a)
-  (simple-prefix a atanh))
-
-;; Prefix
 (defun simple-+ (a b)
   (simple-infix a b +
 		(((zerop a) b) (t `(,a + ,b)))
@@ -144,16 +99,16 @@
 
 (defun delta-sin (sin-list wrt)
   (let ((a (second sin-list)))
-    (simple-* (delta a wrt) (simple-cos a))))
+    (simple-* (delta a wrt) (simple 'cos a))))
 
 (defun delta-cos (cos-list wrt)
   (let ((a (second cos-list)))
-    (simple-* (delta a wrt) (simple-- 0 (simple-sin a)))))
+    (simple-* (delta a wrt) (simple-- 0 (simple 'sin a)))))
 
 (defun delta-tan (tan-list wrt)
   (let ((a (second tan-list)))
     (simple-* (delta a wrt)
-	      (simple-/ 1 (simple-^ (simple-cos a) 2)))))
+	      (simple-/ 1 (simple-^ (simple 'cos a) 2)))))
 
 (defun delta-asin (asin-list wrt)
   (let ((a (second asin-list)))
@@ -172,16 +127,16 @@
 
 (defun delta-sinh (sinh-list wrt)
   (let ((a (second sinh-list)))
-    (simple-* (delta a wrt) (simple-cosh a))))
+    (simple-* (delta a wrt) (simple 'cosh a))))
 
 (defun delta-cosh (cosh-list wrt)
   (let ((a (second cosh-list)))
-    (simple-* (delta a wrt) (simple-sinh a))))
+    (simple-* (delta a wrt) (simple 'sinh a))))
 
 (defun delta-tanh (tanh-list wrt)
   (let ((a (second tanh-list)))
     (simple-* (delta a wrt)
-	      (simple-/ 1 (simple-^ (simple-cosh a) 2)))))
+	      (simple-/ 1 (simple-^ (simple 'cosh a) 2)))))
 
 (defun delta-asinh (asinh-list wrt)
   (let ((a (second asinh-list)))
