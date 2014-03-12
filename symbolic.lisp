@@ -127,19 +127,14 @@
 	    (delta-exp list wrt)))
 
 ;;; Derivative taker
-(defun delta (expression wrt)
+(defun delta (expr wrt)
   (cond
-    ((atom expression)
-     (delta-atom expression wrt))
-    ((null (rest expression))
-     (delta (first expression) wrt))
-    ((eql (first expression) '-)
-     (delta-- `(0 - ,(second expression)) wrt))
-    (t
-     (dolist (pair op)
-       (when (eql (first pair) (nth (second pair) expression))
-	 (return
-	   (delta-operate (first pair) expression wrt)))))))
+    ((atom expr) (delta-atom expr wrt))
+    ((null (rest expr)) (delta (first expr) wrt))
+    ((eql (first expr) '-) (delta-- `(0 - ,(second expr)) wrt))
+    (t (dolist (pair op)
+	 (when (eql (first pair) (nth (second pair) expr))
+	   (return (delta-operate (first pair) expr wrt)))))))
 
 	
 
