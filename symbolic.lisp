@@ -1,20 +1,27 @@
 ;;;; Some symbolic algebra in infix notation
 
-;; Fix clashes
+;; TODO: Unify methods simple and simple-in
 
-;;; Set constants and aliases to functions
+;;; Set globals
 (defconstant e (exp 1) "Euler's Number")  
 (defconstant i #C(0 1) "Imaginary Number")
 (defun ^ (a b) (expt a b))
 
-(defparameter op '((+ 1) (- 1) (* 1) (/ 1) (^ 1)
-		   (log 0) (sin 0) (cos 0) (tan 0)
-		   (sinh 0) (cosh 0) (tanh 0)
-		   (asin 0) (acos 0) (atan 0)
-		   (asinh 0) (acosh 0) (atanh 0)))
+(defvar op '((+ 1) (- 1) (* 1) (/ 1) (^ 1) (log 0)
+	     (sin 0) (cos 0) (tan 0) (sinh 0) (cosh 0)
+	     (tanh 0) (asin 0) (acos 0) (atan 0) (asinh 0)
+	     (acosh 0) (atanh 0)))
 
-(defun delta-op (op)
-  (read-from-string (concatenate 'string "delta-" (string op))))
+(defvar delta-table '((sin (cos x)) (cos (* -1 (sin x)))
+		      (tan (/ (^ (cos x) 2)))
+		      (sinh (cosh x)) (cosh (sinh x))
+		      (tanh (/ (^ (cosh x) 2)))
+		      (asin (/ (^ (- 1 (^ x 2)) 1/2)))
+		      (acos (- (/ (^ (- 1 (^ x 2)) 1/2))))
+		      (atan (/ (+ (^ x 2))))
+		      (asinh (/ (^ (+ 1 (^ x 2)) 1/2)))
+		      (acosh (/ (^ (* (- x 1) (+ x 1)) 1/2)))
+		      (atanh (/ (- 1 (^ x 2)))) (log (/ x))))
 
 ;; Symbolic macros
 (defmacro simple-infix (a b operator clauses-one clauses-two)
@@ -27,9 +34,24 @@
 	 (t `(,a ,',operator ,b))))
  
 ;;; Simplifying functions
-(defun simple (operator a &optional (b nil))
+(defun simple-prefix (operator a)
   (cond ((numberp a) (funcall operator a))
-	(t '(operator a))))
+	(t `(,operator ,a))))
+
+(defun simplify (expr)
+  (dolist (pair op)
+    (when (atom expr) (return expr))
+    (when (eql (first pair) (first expr))
+      (return (simple (first expr) (simplify (second expr))
+		      (simplify (third expr)))))))
+
+(defun simple (operator a &optional (b nil))
+  (cond ((eq operator '+) (simple-+ a b))
+	((eq operator '-) (simple-- a b))
+	((eq operator '*) (simple-* a b))
+	((eq operator '/) (simple-/ a b))
+	((eq operator '^) (simple-^ a b))
+	(t (simple-prefix operator a))))
 
 (defun simple-+ (a b)
   (simple-infix a b +
@@ -59,6 +81,18 @@
 ;;; Derivative helper functions
 (defun delta-atom (atom wrt)
   (if (eql atom wrt) 1 0))
+
+(defun delta-prefix (operator list wrt)
+  (cond
+    ((eql operator '+) (delta-+ list wrt))
+    ((eql operator '-) (delta-- list wrt))
+    ((eql operator '*) (delta-* list wrt))
+    ((eql operator '/) (delta-/ list wrt))
+    ((eql operator '^) (delta-^ list wrt))
+    (t (dolist (pair delta-table)
+	 (when (eql operator (first pair))
+	   (return (simple-* (delta (second list) wrt)
+			     (simplify (second pair)))))))))
 
 (defun delta-+ (list wrt)
   (let ((a (first list)) (b (third list)))
@@ -93,67 +127,6 @@
   (simple-+ (delta-power list wrt)
 	    (delta-exp list wrt)))
 
-(defun delta-log (list wrt)
-  (let ((a (second list)))
-    (simple-* (delta a wrt) (simple-/ 1 a))))
-
-(defun delta-sin (list wrt)
-  (let ((a (second list)))
-    (simple-* (delta a wrt) (simple 'cos a))))
-
-(defun delta-cos (list wrt)
-  (let ((a (second list)))
-    (simple-* (delta a wrt) (simple-- 0 (simple 'sin a)))))
-
-(defun delta-tan (list wrt)
-  (let ((a (second list)))
-    (simple-* (delta a wrt)
-	      (simple-/ 1 (simple-^ (simple 'cos a) 2)))))
-
-(defun delta-asin (list wrt)
-  (let ((a (second list)))
-    (simple-* (delta a wrt)
-	      (simple-/ 1 (simple-^ (simple-- 1 (simple-^ a 2)) 1/2)))))
-
-(defun delta-acos (list wrt)
-  (let ((a (second list)))
-    (simple-* (delta a wrt)
-	      (simple-- 0 (simple-/ 1 (simple-^ (simple-- 1 (simple-^ a 2)) 1/2))))))
-
-(defun delta-atan (list wrt)
-  (let ((a (second list)))
-    (simple-* (delta a wrt)
-	      (simple-/ 1 (simple-+ 1 (simple-^ a 2))))))
-
-(defun delta-sinh (list wrt)
-  (let ((a (second list)))
-    (simple-* (delta a wrt) (simple 'cosh a))))
-
-(defun delta-cosh (list wrt)
-  (let ((a (second list)))
-    (simple-* (delta a wrt) (simple 'sinh a))))
-
-(defun delta-tanh (list wrt)
-  (let ((a (second list)))
-    (simple-* (delta a wrt)
-	      (simple-/ 1 (simple-^ (simple 'cosh a) 2)))))
-
-(defun delta-asinh (list wrt)
-  (let ((a (second list)))
-    (simple-* (delta a wrt)
-	      (simple-/ 1 (simple-^ (simple-+ 1 (simple-^ a 2)) 1/2)))))
-
-(defun delta-acosh (list wrt)
-  (let ((a (second list)))
-    (simple-* (delta a wrt)
-	      (simple-/ 1 (simple-* (simple-^ (simple-- a 1) 1/2)
-				    (simple-^ (simple-+ a 1) 1/2))))))
-
-(defun delta-atanh (list wrt)
-  (let ((a (second list)))
-    (simple-* (delta a wrt)
-	      (simple-/ 1 (simple-- 1 (simple-^ a 1/2))))))
-
 ;;; Derivative taker
 (defun delta (expression wrt)
   (cond
@@ -167,7 +140,7 @@
      (dolist (pair op)
        (when (eql (first pair) (nth (second pair) expression))
 	 (return
-	   (funcall (delta-op (first pair)) expression wrt)))))))
+	   (delta-prefix (first pair) expression wrt)))))))
 
 	
 
