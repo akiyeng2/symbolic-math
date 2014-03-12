@@ -135,8 +135,3 @@
     (t (dolist (pair op)
 	 (when (eql (first pair) (nth (second pair) expr))
 	   (return (delta-operate (first pair) expr wrt)))))))
-
-	
-
-
-
