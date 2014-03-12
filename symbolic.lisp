@@ -82,7 +82,7 @@
 (defun delta-atom (atom wrt)
   (if (eql atom wrt) 1 0))
 
-(defun delta-prefix (operator list wrt)
+(defun delta-operate (operator list wrt)
   (cond
     ((eql operator '+) (delta-+ list wrt))
     ((eql operator '-) (delta-- list wrt))
@@ -140,7 +140,7 @@
      (dolist (pair op)
        (when (eql (first pair) (nth (second pair) expression))
 	 (return
-	   (delta-prefix (first pair) expression wrt)))))))
+	   (delta-operate (first pair) expression wrt)))))))
 
 	
 
