@@ -23,14 +23,14 @@
 		      (acosh (/ (^ (* (- x 1) (+ x 1)) 1/2)))
 		      (atanh (/ (- 1 (^ x 2)))) (log (/ x))))
 
-(defun simple-infix (a b operator clauses-one clauses-two)
-  (cond ((and (numberp a) (numberp b))
-	  `(,operator ,a ,b))
-	 ((numberp a)
-	  (cond `@clauses-one))
-	 ((numberp b)
-	  (cond `@clauses-two))
-	 (t `(,a ,operator ,b))))
+(defmacro simple-infix (a b operator clauses-one clauses-two)
+  `(cond ((and (numberp ,a) (numberp ,b))
+	  (,operator ,a ,b))
+	 ((numberp ,a)
+	  (cond ,@clauses-one))
+	 ((numberp ,b)
+	  (cond ,@clauses-two))
+	 (t `(,a ,',operator ,b))))
  
 ;;; Simplifying functions
 (defun simple-+ (a b)
