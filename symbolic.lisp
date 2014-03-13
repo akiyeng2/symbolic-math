@@ -1,6 +1,6 @@
 ;;;; Some symbolic algebra in infix notation
 
-;; TODO: rewrite macro and delta-op to infix
+;; TODO: rewrite macro
 
 ;;; Set globals
 (defconstant e (exp 1) "Euler's Number")  
@@ -12,16 +12,16 @@
 	     (tanh 0) (asin 0) (acos 0) (atan 0) (asinh 0)
 	     (acosh 0) (atanh 0)))
 
-(defvar delta-table '((sin (cos x)) (cos (* -1 (sin x)))
-		      (tan (/ (^ (cos x) 2)))
+(defvar delta-table '((sin (cos x)) (cos (-1 * (sin x)))
+		      (tan (1 / ((cos x) ^ 2)))
 		      (sinh (cosh x)) (cosh (sinh x))
-		      (tanh (/ (^ (cosh x) 2)))
-		      (asin (/ (^ (- 1 (^ x 2)) 1/2)))
-		      (acos (- (/ (^ (- 1 (^ x 2)) 1/2))))
-		      (atan (/ (+ (^ x 2))))
-		      (asinh (/ (^ (+ 1 (^ x 2)) 1/2)))
-		      (acosh (/ (^ (* (- x 1) (+ x 1)) 1/2)))
-		      (atanh (/ (- 1 (^ x 2)))) (log (/ x))))
+		      (tanh (1 / ((cosh x) ^ 2)))
+		      (asin (1 / ((1 - (x ^ 2)) ^ 1/2)))
+		      (acos (0 - (1 / ((1 - (x ^ 2)) ^ 1/2))))
+		      (atan (1 / (1 + (x ^ 2))))
+		      (asinh (1 / ((1 + (x ^ 2)) ^ 1/2)))
+		      (acosh (1 / (((x - 1) * (x + 1)) ^ 1/2)))
+		      (atanh (1 / (1 - (x ^ 2)))) (log (1 / x))))
 
 (defmacro simple-infix (a b operator clauses-one clauses-two &optional (clauses-three nil))
   `(cond ((and (numberp ,a) (numberp ,b))
