@@ -1,6 +1,6 @@
 ;;;; Some symbolic algebra in infix notation
 
-;; TODO: rewrite macro
+;; TODO: rewrite macro and fix list condition in simple functions
 
 ;;; Set globals
 (defconstant e (exp 1) "Euler's Number")  
@@ -12,7 +12,7 @@
 	     (tanh 0) (asin 0) (acos 0) (atan 0) (asinh 0)
 	     (acosh 0) (atanh 0)))
 
-(defvar delta-table '((sin (cos x)) (cos (-1 * (sin x)))
+(defvar delta-table '((sin (cos x)) (cos (0 - (sin x)))
 		      (tan (1 / ((cos x) ^ 2)))
 		      (sinh (cosh x)) (cosh (sinh x))
 		      (tanh (1 / ((cosh x) ^ 2)))
@@ -122,7 +122,9 @@
     (when (null (rest expr)) (return (simplify (first expr))))
     (when (eql (first pair) (second expr))
       (return (simple (second expr) (simplify (first expr))
-		      (simplify (third expr)))))))
+		      (simplify (third expr)))))
+    (when (eql (first pair) (first expr))
+      (return (simple (first expr) (simplify (second expr)))))))
 
 ;;; Derivative helper functions
 (defun delta-atom (atom wrt)
