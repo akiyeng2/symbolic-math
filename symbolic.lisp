@@ -1,6 +1,6 @@
 ;;;; Some symbolic algebra in infix notation
 
-;; TODO: Unify methods simple and simple-in
+;; TODO: rewrite macro and delta-op to infix
 
 ;;; Set globals
 (defconstant e (exp 1) "Euler's Number")  
@@ -23,30 +23,76 @@
 		      (acosh (/ (^ (* (- x 1) (+ x 1)) 1/2)))
 		      (atanh (/ (- 1 (^ x 2)))) (log (/ x))))
 
-(defmacro simple-infix (a b operator clauses-one clauses-two)
+(defmacro simple-infix (a b operator clauses-one clauses-two &optional (clauses-three nil))
   `(cond ((and (numberp ,a) (numberp ,b))
 	  (,operator ,a ,b))
 	 ((numberp ,a)
 	  (cond ,@clauses-one))
 	 ((numberp ,b)
 	  (cond ,@clauses-two))
-	 (t `(,a ,',operator ,b))))
- 
+	 (t (cond ,@clauses-three
+		  (t `(,a ,',operator ,b))))))
+
 ;;; Simplifying functions
+(defun get-var (list)
+  (first (member-if #'symbolp list)))
+
+(defun get-num (list)
+  (first (member-if #'numberp list)))
+
 (defun simple-+ (a b)
   (simple-infix a b +
 		(((zerop a) b) (t `(,a + ,b)))
-		(((zerop b) a) (t `(,a + ,b)))))
+		(((zerop b) a) (t `(,a + ,b)))
+		(((eql a b) `(,2 * ,a))
+		 ((and (listp b) (listp a)
+		       (member '* b) (member '* a)
+		       (eql (get-var a) (get-var b)))
+		  (simple-* (get-var a) (+ (get-num a) (get-num b))))
+		 ((and (listp b) (member '* b) (member a b))
+		  (if (member-if #'numberp (member '* b))
+		      (simple-* a (simple-+ (third b) 1))
+		      (simple-* a (simple-+ (first b) 1))))
+		 ((and (listp a) (member '* a) (member b a))
+		  (if (member-if #'numberp (member '* a))
+		      (simple-* b (simple-+ (third a) 1))
+		      (simple-* b (simple-+ (first a) 1)))))))
 
 (defun simple-- (a b)
   (simple-infix a b -
 		(((zerop a) `(- ,b)) (t `(,a - ,b)))
-		(((zerop b) a) (t `(,a - ,b)))))
+		(((zerop b) a) (t `(,a - ,b)))
+		(((eql a b) 0)
+		 ((and (listp b) (listp a)
+		       (member '* b) (member '* a)
+		       (eql (get-var a) (get-var b)))
+		  (simple-* (get-var a) (- (get-num a) (get-num b))))
+		 ((and (listp b) (member '* b) (member a b))
+		  (if (member-if #'numberp (member '* b))
+		      (simple-* a (simple-- 1 (third b)))
+		      (simple-* a (simple-- 1 (first b)))))
+		 ((and (listp a) (member '* a) (member b a))
+		  (if (member-if #'numberp (member '* a))
+		      (simple-* b (simple-- (third a) 1))
+		      (simple-* b (simple-- (first a) 1)))))))
 
 (defun simple-* (a b)
   (simple-infix a b *
 		(((zerop a) 0) ((= a 1) b) (t `(,a * ,b)))
-		(((zerop b) 0) ((= b 1) a) (t `(,a * ,b)))))
+		(((zerop b) 0) ((= b 1) a) (t `(,a * ,b)))
+		(((eql a b) `(,a ^ ,2))
+		 ((and (listp b) (listp a)
+		       (member '^ b) (member '^ a)
+		       (eql (get-var a) (get-var b)))
+		  (simple-^ (get-var a) (+ (get-num a) (get-num b))))
+		 ((and (listp b) (member '^ b) (member a b))
+		  (if (member-if #'numberp (member '^ b))
+		      (simple-^ a (simple-+ (third b) 1))
+		      (simple-^ a (simple-+ (first b) 1))))
+		 ((and (listp a) (member '^ a) (member b a))
+		  (if (member-if #'numberp (member '^ a))
+		      (simple-^ b (simple-+ (third a) 1))
+		      (simple-^ b (simple-+ (first a) 1)))))))
 
 (defun simple-/ (a b)
   (simple-infix a b /
@@ -73,8 +119,9 @@
 (defun simplify (expr)
   (dolist (pair op)
     (when (atom expr) (return expr))
-    (when (eql (first pair) (first expr))
-      (return (simple (first expr) (simplify (second expr))
+    (when (null (rest expr)) (return (simplify (first expr))))
+    (when (eql (first pair) (second expr))
+      (return (simple (second expr) (simplify (first expr))
 		      (simplify (third expr)))))))
 
 ;;; Derivative helper functions
