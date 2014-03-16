@@ -1,6 +1,6 @@
 ;;;; Some symbolic algebra in infix notation
 
-;; TODO: rewrite macros
+;; TODO: rewrite macros and combine checking
 
 ;;; Set globals
 (defconstant e (exp 1) "Euler's Number")  
@@ -48,6 +48,10 @@
   (cond ((or (eql operator '+) (eql operator '-)) '+)
 	((or (eql operator '*) (eql operator '/)) '*)))
 
+(defun lower-order (operator)
+  (cond ((or (eql operator '*) (eql operator '/)) '+)
+	((or (eql operator '^) '*))))
+
 (defun exprp (object)
   (or (listp object) (symbolp object)))
 
@@ -94,12 +98,15 @@
 	  (simple big-op (simple op (nth p arg1) 1)
 		  (nth k arg1)))))))
 
+(defun identical (arg1 arg2)
+  (or (equal arg1 arg2) (equal (reverse arg1) arg2)))
+
 ;;; Simplifying functions
 (defun simple-+ (a b)
   (simple-infix a b +
 		(((zerop a) b) (t `(,a + ,b)))
 		(((zerop b) a) (t `(,a + ,b)))
-		((equal a b) `(,2 * ,a))
+		((identical a b) `(,2 * ,a))
 		((and (listp b) (eql (first b) '-))
 		 (simple-- a (second b)))
 		((operator-memberp a b '+ '+)
@@ -129,7 +136,7 @@
   (simple-infix a b -
 		(((zerop a) (negative b)) (t `(,a - ,b)))
 		(((zerop b) a) (t `(,a - ,b)))
-		((equal a b) 0)
+		((identical a b) 0)
 		((and (listp b) (eql (first b) '-))
 		 (simple-+ a (second b)))
 		((operator-memberp a b '+ '+)
@@ -155,11 +162,9 @@
   (simple-infix a b *
 		(((zerop a) 0) ((= a 1) b) (t `(,a * ,b)))
 		(((zerop b) 0) ((= b 1) a) (t `(,a * ,b)))
-		((equal a b) `(,a ^ ,2))
-		((and (listp b) (listp a)
-		      (member '^ b) (member '^ a)
-		      (eql (get-var a) (get-var b)))
-		 (simple-^ (get-var a) (+ (get-num a) (get-num b))))
+		((identical a b) `(,a ^ ,2))
+		((operator-memberp a b '+ '+)
+		 (foil a b '*))
 		((and (listp b) (member '^ b) (member a b))
 		 (if (member-if #'numberp (member '^ b))
 		     (simple-^ a (simple-+ (third b) 1))
@@ -172,7 +177,8 @@
 (defun simple-/ (a b)
   (simple-infix a b /
 		(((zerop a) 0) (t `(,a / ,b)))
-		((t `(,a / ,b)))))
+		(((zerop b) 0) (t `(,a / ,0)))
+		((identical a b) 1)))
 
 (defun simple-^ (a b)
   (simple-infix a b ^
@@ -184,6 +190,7 @@
 	(t `(,operator ,a))))
 
 (defun simple (operator a &optional (b nil))
+  (break)
   (cond ((eql operator '+) (simple-+ a b))
 	((eql operator '-) (simple-- a b))
 	((eql operator '*) (simple-* a b))
