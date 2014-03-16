@@ -163,8 +163,6 @@
 		(((zerop a) 0) ((= a 1) b) (t `(,a * ,b)))
 		(((zerop b) 0) ((= b 1) a) (t `(,a * ,b)))
 		((identical a b) `(,a ^ ,2))
-		((operator-memberp a b '+ '+)
-		 (foil a b '*))
 		((and (listp b) (member '^ b) (member a b))
 		 (if (member-if #'numberp (member '^ b))
 		     (simple-^ a (simple-+ (third b) 1))
