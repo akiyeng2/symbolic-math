@@ -7,9 +7,9 @@ This is a work-in-progress lisp library for symbolic math manipulation. The dial
 
 Compiling & Loading
 -------------------
-To load this library, open a lisp interpreter and type `(load "symbolic.lisp")`
+To load this library, open a lisp interpreter and load the definitions.
 
-If you load this library often, you may choose to compile the library with `(compile-file "symbolic.lisp)` and load the following `.fas` or `.fasl`. Check your lisp implementation for more details.
+If you load this library often, you may choose to compile the library by compiling the files and load the following `.fas` or `.fasl` files. Check your lisp implementation for more details.
 
 Usage
 -----
