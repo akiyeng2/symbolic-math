@@ -3,7 +3,7 @@ symbolic-math: a Lisp Symbolic Math Library
 
 Introduction
 ------------
-This is a work-in-progress lisp library for symbolic math manipulation. The dialect used is Common Lisp. However, the code is mostly portable to other MacLisp variants like Emacs lisp. Just replace the call to defconstant with defconst.
+This is a work-in-progress lisp library for symbolic math manipulation. The dialect used is Common Lisp.
 
 Compiling & Loading
 -------------------
