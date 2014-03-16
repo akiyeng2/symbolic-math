@@ -13,7 +13,7 @@ If you load this library often, you may choose to compile the library by compili
 
 Usage
 -----
-Symbolic evaluation of functions is supported by `simple-` functions.
+Symbolic evaluation of functions is supported by the `simplify` function.
 Differentiation is supported by the `delta` function.
 
 Supported Functions
