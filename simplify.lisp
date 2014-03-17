@@ -173,7 +173,6 @@
 	(t `(,operator ,a))))
 
 (defun simple (operator a &optional (b nil))
-  (break)
   (cond ((eql operator '+) (simple-+ a b))
 	((eql operator '-) (simple-- a b))
 	((eql operator '*) (simple-* a b))
