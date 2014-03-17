@@ -1,3 +1,5 @@
+;;;; Functions for handling symbolic manipulation
+
 (defconstant e (exp 1) "Euler's Number")  
 (defconstant i #C(0 1) "Imaginary Number")
 (defun ^ (a b) (expt a b))

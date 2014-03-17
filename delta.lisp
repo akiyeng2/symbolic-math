@@ -1,3 +1,5 @@
+;;;; Derivatives
+
 (defvar *delta-table* '((sin (cos x)) (cos (0 - (sin x)))
 			(tan (1 / ((cos x) ^ 2)))
 			(sinh (cosh x)) (cosh (sinh x))
