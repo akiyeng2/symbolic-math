@@ -14,18 +14,6 @@
 (defun delta-atom (atom wrt)
   (if (eql atom wrt) 1 0))
 
-(defun delta-operate (operator list wrt)
-  (cond
-    ((eql operator '+) (delta-+ list wrt))
-    ((eql operator '-) (delta-- list wrt))
-    ((eql operator '*) (delta-* list wrt))
-    ((eql operator '/) (delta-/ list wrt))
-    ((eql operator '^) (delta-^ list wrt))
-    (t (dolist (pair *delta-table*)
-	 (when (eql operator (first pair))
-	   (return (simple-* (delta (second list) wrt)
-			     (simplify (second pair)))))))))
-
 (defun delta-+ (list wrt)
   (let ((a (first list)) (b (third list)))
     (simple-+ (delta a wrt) (delta b wrt))))
@@ -58,6 +46,18 @@
 (defun delta-^ (list wrt)
   (simple-+ (delta-power list wrt)
 	    (delta-exp list wrt)))
+
+(defun delta-operate (operator list wrt)
+  (cond
+    ((eql operator '+) (delta-+ list wrt))
+    ((eql operator '-) (delta-- list wrt))
+    ((eql operator '*) (delta-* list wrt))
+    ((eql operator '/) (delta-/ list wrt))
+    ((eql operator '^) (delta-^ list wrt))
+    (t (dolist (pair *delta-table*)
+	 (when (eql operator (first pair))
+	   (return (simple-* (delta (second list) wrt)
+			     (simplify (second pair)))))))))
 
 (defun delta (expr wrt)
   (cond
