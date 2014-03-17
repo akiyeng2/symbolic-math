@@ -160,7 +160,7 @@
 (defun simple-/ (a b)
   (simple-infix a b /
 		(((zerop a) 0) (t `(,a / ,b)))
-		(((zerop b) 0) (t `(,a / ,0)))
+		(((zerop b) `(,a / ,0)) (t `(,a / ,b)))
 		((identical a b) 1)))
 
 (defun simple-^ (a b)
