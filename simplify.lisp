@@ -84,7 +84,8 @@
 		  (nth k arg1)))))))
 
 (defun identical (arg1 arg2)
-  (or (equal arg1 arg2) (equal (reverse arg1) arg2)))
+  (or (equal arg1 arg2)
+      (and (listp arg1) (equal (reverse arg1) arg2))))
 
 (defun simple-+ (a b)
   (simple-infix a b +
