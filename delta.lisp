@@ -15,31 +15,31 @@
   (if (eql atom wrt) 1 0))
 
 (defun delta-+ (list wrt)
-  (let ((a (first list)) (b (third list)))
+  (let-infix (a b list)
     (simple-+ (delta a wrt) (delta b wrt))))
 
 (defun delta-- (list wrt)
-  (let ((a (first list)) (b (third list)))
+  (let-infix (a b list)
     (simple-- (delta a wrt) (delta b wrt))))
 
 (defun delta-* (list wrt)
-  (let ((a (first list)) (b (third list)))
+  (let-infix (a b list)
     (simple-+ (simple-* (delta a wrt) b)
 	      (simple-* (delta b wrt) a))))
 
 (defun delta-/ (list wrt)
-  (let ((a (first list)) (b (third list)))
+  (let-infix (a b list)
     (simple-/ (simple-- (simple-* (delta a wrt) b)
 			(simple-* (delta b wrt) a))
 	      (simple-^ b 2))))
 
 (defun delta-power (list wrt)
-  (let ((a (first list)) (b (third list)))
+  (let-infix (a b list)
     (simple-* (delta a wrt)
 	      (simple-* b (simple-^ a (simple-- b 1))))))
 
 (defun delta-exp (list wrt)
-  (let ((a (first list)) (b (third list)))
+  (let-infix (a b list)
     (simple-* (delta b wrt)
 	      (simple-* `(log ,a) (simple-^ a b)))))
 

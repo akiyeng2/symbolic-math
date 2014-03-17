@@ -25,6 +25,10 @@
        (let ((,var3 (- 2 ,var1)) (,var4 (- 2 ,var2)))
 	 ,@body))))
 
+(defmacro let-infix ((left right list) &body body)
+  `(let ((,left (first ,list)) (,right (third ,list)))
+     ,@body))
+
 (defun greater-order (operator)
   (cond ((or (eql operator '+) (eql operator '-)) '*)
 	((ot (eql operator '*) (eql operator '/)) '^)))
