@@ -90,8 +90,7 @@
 
 (defun simple-+ (a b)
   (simple-infix a b +
-    ((and (numberp a) (zerop a)) b)
-    ((and (numberp b) (zerop b)) a)
+    ((equalp a 0)) b) ((equalp b 0)) a)
     ((identical a b) `(,2 * ,a))
     ((and (listp b) (eql (first b) '-))
      (simple-- a (second b)))
@@ -120,8 +119,7 @@
 
 (defun simple-- (a b)
   (simple-infix a b -
-    ((and (numberp a) (zerop a)) (negative b))
-    ((and (numberp b) (zerop b)) a)
+    ((equalp a 0) (negative b)) ((equalp b 0) a)
     ((identical a b) 0)
     ((and (listp b) (eql (first b) '-))
      (simple-+ a (second b)))
@@ -146,10 +144,8 @@
 
 (defun simple-* (a b)
   (simple-infix a b *
-    ((and (numberp a) (zerop a)) 0)
-    ((and (numberp a) (= a 1)) b)
-    ((and (numberp b) (zerop b)) 0)
-    ((and (numberp b) (= b 1)) a)
+    ((equalp a 0) 0) ((equalp b 0) 0) 
+    ((equalp a 1) b) ((equalp b 1) a)
     ((identical a b) `(,a ^ ,2))
     ((and (listp b) (member '^ b) (member a b))
      (if (member-if #'numberp (member '^ b))
@@ -162,17 +158,13 @@
 
 (defun simple-/ (a b)
   (simple-infix a b /
-    ((and (numberp a) (zerop a)) 0)
-    ((and (numberp b) (zerop b)) `(,a / ,0))
+    ((equalp a 0) 0) ((equalp b 0) `(,a / ,0))
     ((identical a b) 1)))
 
 (defun simple-^ (a b)
   (simple-infix a b ^
-    ((and (numberp a) (zerop a) 0))
-    ((and (numberp a) (= a 1) 1))
-    ((and (numberp b) (zerop b) 1))
-    ((and (numberp b) (= b 1) a)) 
-    ((zerop b) 1) ((= b 1) a) (t `(,a ^ ,b))))
+    ((equalp a 0) 0) ((equalp b 0) 1)
+    ((equalp a 1) 1) ((equalp b 1) a)))
 
 (defun simple-prefix (operator a)
   (cond ((numberp a) (funcall operator a))
