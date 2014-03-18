@@ -90,7 +90,7 @@
 
 (defun simple-+ (a b)
   (simple-infix a b +
-    ((equalp a 0)) b) ((equalp b 0)) a)
+    ((equalp a 0) b) ((equalp b 0) a)
     ((identical a b) `(,2 * ,a))
     ((and (listp b) (eql (first b) '-))
      (simple-- a (second b)))
@@ -137,9 +137,9 @@
      (combine-hybrid a b '-))
     ((operator-memberp a b '+ '*)
      (negative (simple-- b a))) ; Reverse order.
-    ((and (listp a) (member '* a) (member b a))
+    ((and (listp a) (member '- a) (atom b))
      (combine-hybrid-atom a b '-))
-    ((and (listp b) (member '* b) (member a b))
+    ((and (listp b) (member '- b) (atom a))
      (negative (simple-- b a)))))
 
 (defun simple-* (a b)
