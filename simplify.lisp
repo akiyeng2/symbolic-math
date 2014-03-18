@@ -80,12 +80,13 @@
 		  (nth q arg2)))))))
 
 (defun combine-hybrid-atom (arg1 arg2 op)
-  (let ((big-op (greater-order op)))
+  (let ((same-op (like-order op)))
     (do-infix (k j) (p q)
-      (when (exprp (nth k arg1))
+      (when (or (and (symbolp arg2) (exprp (nth k arg1)))
+		(and (numberp arg2) (numberp (nth k arg1))))
 	(return-from combine-hybrid-atom
-	  (simple big-op (simple op (nth p arg1) 1)
-		  (nth k arg1)))))))
+	  (simple same-op (simple op (nth k arg1) arg2)
+		  (nth p arg1)))))))
 
 (defun identical (arg1 arg2)
   (or (equal arg1 arg2)
