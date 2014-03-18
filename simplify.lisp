@@ -99,7 +99,7 @@
     ((operator-memberp a b '+ '-)
      (simple-+ a (plusify b)))
     ((operator-memberp a b '- '+)
-     (simple-+ b a)) ; Reverse order.
+     (simple-+ b a))			; Reverse order.
     ((operator-memberp a b '- '-)
      (simple-+ (plusify a) (plusify b))) ; Cheat.
     ((operator-memberp a b '* '*)
@@ -107,7 +107,7 @@
     ((operator-memberp a b '* '+)
      (combine-hybrid a b '+))
     ((operator-memberp a b '+ '*)
-     (simple-+ b a)) ; Reverse order.
+     (simple-+ b a))			; Reverse order.
     ((operator-memberp a b '* '-)
      (simple-+ a (plusify b)))
     ((operator-memberp a b '- '*)
@@ -115,7 +115,7 @@
     ((and (listp a) (member '+ a) (atom b))
      (combine-hybrid-atom a b '+))
     ((and (listp b) (member '+ b) (atom a))
-     (simple-+ b a)))) ; Reverse order.
+     (simple-+ b a))))			; Reverse order.
 
 (defun simple-- (a b)
   (simple-infix a b -
@@ -128,7 +128,7 @@
     ((operator-memberp a b '+ '-)
      (simple-- a (plusify b)))
     ((operator-memberp a b '- '+)
-     (negative (simple-- b a))) ; Reverse order.
+     (negative (simple-- b a)))		; Reverse order.
     ((operator-memberp a b '- '-)
      (simple-- (plusify a) (plusify b))) ; Cheat.
     ((operator-memberp a b '* '*)
@@ -136,7 +136,7 @@
     ((operator-memberp a b '* '+)
      (combine-hybrid a b '-))
     ((operator-memberp a b '+ '*)
-     (negative (simple-- b a))) ; Reverse order.
+     (negative (simple-- b a)))		; Reverse order.
     ((and (listp a) (member '- a) (atom b))
      (combine-hybrid-atom a b '-))
     ((and (listp b) (member '- b) (atom a))
