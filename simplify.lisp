@@ -9,6 +9,15 @@
 	       (tanh 0) (asin 0) (acos 0) (atan 0) (asinh 0)
 	       (acosh 0) (atanh 0)))
 
+(defun flatten (obj)
+  (do* ((result (list obj))
+        (node result))
+       ((null node) (delete nil result))
+    (cond ((consp (car node))
+           (when (cdar node) (push (cdar node) (cdr node)))
+           (setf (car node) (caar node)))
+          (t (setf node (cdr node))))))
+
 (defmacro simple-infix (a b operator &body clauses)
   `(cond ((and (numberp ,a) (numberp ,b))
 	  (,operator ,a ,b))
@@ -86,7 +95,8 @@
 
 (defun identical (arg1 arg2)
   (or (equal arg1 arg2)
-      (and (listp arg1) (equal (reverse arg1) arg2))))
+      (and (listp arg1) (listp arg2)
+	   (not (set-difference (flatten arg1) (flatten arg2))))))
 
 (defun simple-+ (a b)
   (simple-infix a b +
