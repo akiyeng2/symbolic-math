@@ -41,7 +41,7 @@
 (defun delta-exp (list wrt)
   (let-infix (a b list)
     (simple-* (delta b wrt)
-	      (simple-* `(log ,a) (simple-^ a b)))))
+	      (simple-* (simple 'log a) (simple-^ a b)))))
 
 (defun delta-^ (list wrt)
   (simple-+ (delta-power list wrt)

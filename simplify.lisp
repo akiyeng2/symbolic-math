@@ -180,12 +180,17 @@
   (cond ((numberp a) (funcall operator a))
 	(t `(,operator ,a))))
 
+(defun simple-log (a)
+  (cond ((or (eql a 'e) (equalp a e)) 1)
+	(t `(log ,a))))
+ 
 (defun simple (operator a &optional (b nil))
   (cond ((eql operator '+) (simple-+ a b))
 	((eql operator '-) (simple-- a b))
 	((eql operator '*) (simple-* a b))
 	((eql operator '/) (simple-/ a b))
 	((eql operator '^) (simple-^ a b))
+	((eql operator 'log) (simple-log a))
 	(t (simple-prefix operator a))))
 
 (defun simplify (expr)
