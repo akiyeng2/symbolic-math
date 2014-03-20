@@ -38,15 +38,20 @@
 
 (defun greater-order (operator)
   (cond ((or (eql operator '+) (eql operator '-)) '*)
-	((ot (eql operator '*) (eql operator '/)) '^)))
+	((or (eql operator '*) (eql operator '/)) '^)))
 
 (defun like-order (operator)
   (cond ((or (eql operator '+) (eql operator '-)) '+)
 	((or (eql operator '*) (eql operator '/)) '*)))
 
 (defun lower-order (operator)
-  (cond ((or (eql operator '*) (eql operator '/)) '+)
+  (cond ((or (eql operator '+) (eql operator '-)) '+)
+	((or (eql operator '*) (eql operator '/)) '+)
 	((or (eql operator '^) '*))))
+
+(defun base-order (operator)
+  (cond ((or (eql operator '+) (eql operator '*)) '+)
+	((or (eql operator '-) (eql operator '/)) '-)))
 
 (defun exprp (object)
   (or (listp object) (symbolp object)))
@@ -71,18 +76,26 @@
 		  (simple op (nth p arg1) (nth q arg2))))))))
 
 (defun combine-higher (arg1 arg2 op)
-  (let ((big-op (greater-order op)))
+  (let ((big-op (greater-order op)) (base-op (base-order op)))
     (do-infix (k j) (p q)
       (when (and (exprp (nth k arg1)) (exprp (nth j arg2)))
 	(return-from combine-higher
 	  (simple big-op (nth k arg1)
-		  (simple op (nth p arg1) (nth q arg2))))))))
+		  (simple base-op (nth p arg1) (nth q arg2))))))))
 
 (defun combine-hybrid (arg1 arg2 op)
   (let ((big-op (greater-order op)))
     (do-infix (k j) (p q)
       (when (and (exprp (nth k arg1)) (exprp (nth j arg2)))
 	(return-from combine-hybrid
+	  (simple op (simple op arg1 (nth j arg2))
+		  (nth q arg2)))))))
+
+(defun combine-hybrid-higher (arg1 arg2 op)
+  (let ((big-op (greater-order op)))
+    (do-infix (k j) (p q)
+      (when (and (exprp (nth k arg1)))
+	(return-from combine-hybrid-higher
 	  (simple op (simple op arg1 (nth j arg2))
 		  (nth q arg2)))))))
 
