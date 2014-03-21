@@ -65,7 +65,7 @@
 (defun plusify (list)
   (simple '+ (first list) (negative (third list))))
 
-(defun operator-memberp (arg1 op1 &optional (arg2 t) (op2 t))
+(defun operator-memberp (arg1 op1 &optional (arg2 '(t)) (op2 't))
   (and (listp arg1) (member op1 arg1) (listp arg2) (member op2 arg2)))
 
 (defun combine-like (arg1 arg2 op)
