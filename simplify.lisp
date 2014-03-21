@@ -210,7 +210,7 @@
 (defun simplify (expr)
   (cond ((atom expr) expr)
 	((null (rest expr)) (simplify (first expr)))
-	((eql (first expr) '-) (simple '* -1 (second expr)))
+	((eql (first expr) '-) (negative (second expr)))
 	((= (length expr) 3)
 	 (simple (second expr) (simplify (first expr)) (simplify (third expr)))) 
 	((= (length expr) 2)
