@@ -2,6 +2,7 @@
 
 (defconstant e (exp 1) "Euler's Number")  
 (defconstant i #C(0 1) "Imaginary Number")
+(defconstant π pi "PI")
 (defun ^ (a b) (expt a b))
 (defparameter *ops* nil)
 
