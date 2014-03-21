@@ -16,7 +16,7 @@
 
 (defmacro defsimple ((operator &rest aliases) (&key (infix nil) (prefix nil)) (a &optional b) &body body)
   (let ((name (gensym)))
-    (pushnew `(,operator ,name) *ops*)
+    (push `(,operator ,name) *ops*)
     (dolist (alias aliases)
       (pushnew `(,alias ,name) *ops*))
     (cond (infix `(defun ,name (,a ,b)
