@@ -3,7 +3,7 @@
 (defconstant e (exp 1) "Euler's Number")  
 (defconstant i #C(0 1) "Imaginary Number")
 (defun ^ (a b) (expt a b))
-(defvar *ops* nil)
+(defparameter *ops* nil)
 
 (defun flatten (obj)
   (do* ((result (list obj))
