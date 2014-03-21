@@ -14,7 +14,7 @@
            (setf (car node) (caar node)))
           (t (setf node (cdr node))))))
 
-(defmacro defsimple ((operator &rest aliases) (&key (infix nil) (prefix nil)) (a &optional b) &body body)
+(defmacro defsimple ((operator &rest aliases) (&key (infix nil)) (a &optional b) &body body)
   (let ((name (gensym)))
     (push `(,operator ,name) *ops*)
     (dolist (alias aliases)
@@ -24,7 +24,7 @@
 			   (,operator ,a ,b))
 			  ,@body
 			  (t `(,a ,',operator ,b)))))
-	  (prefix `(defun ,name (,a)
+	  (t `(defun ,name (,a)
 		     (cond ,@body
 			   (t `(,',operator ,a))))))))
 
@@ -187,20 +187,20 @@
   ((equalp a 0) 0) ((equalp b 0) 1)
   ((equalp a 1) 1) ((equalp b 1) a))
 
-(defsimple (log ln) (:prefix t) (a)
+(defsimple (log ln) (a)
   ((or (eql a 'e) (equalp a e)) 1))
 
-(defsimple (sin) (:prefix t) (a))
-(defsimple (cos) (:prefix t) (a))
-(defsimple (tan) (:prefix t) (a))
-(defsimple (asin) (:prefix t) (a))
-(defsimple (acos) (:prefix t) (a))
-(defsimple (atan) (:prefix t) (a))
-(defsimple (sinh) (:prefix t) (a))
-(defsimple (cosh) (:prefix t) (a))
-(defsimple (asinh) (:prefix t) (a))
-(defsimple (acosh) (:prefix t) (a))
-(defsimple (atanh) (:prefix t) (a))
+
+(defsimple (cos) (a))
+(defsimple (tan) (a))
+(defsimple (asin) (a))
+(defsimple (acos) (a))
+(defsimple (atan) (a))
+(defsimple (sinh) (a))
+(defsimple (cosh) (a))
+(defsimple (asinh) (a))
+(defsimple (acosh) (a))
+(defsimple (atanh) (a))
  
 (defun simple (operator &rest args)
   (dolist (pair *ops*)
