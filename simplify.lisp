@@ -155,7 +155,7 @@
   ((operator-memberp a '+ b '-)
    (simple '- a (plusify b)))
   ((operator-memberp a '- b '+)
-   (negative (simple-- b a)))		; Reverse order.
+   (negative (simple '- b a)))		; Reverse order.
   ((operator-memberp a '- b '-)
    (simple '- (plusify a) (plusify b))) ; Cheat.
   ((operator-memberp a '* b '*)
