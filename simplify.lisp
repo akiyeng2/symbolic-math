@@ -17,9 +17,11 @@
 
 (defmacro defsimple ((operator &rest aliases) (&key (infix nil)) (a &optional b) &body body)
   (let ((name (gensym)))
-    (push `(,operator ,name) *ops*)
+    (push name *ops*)
+    (push operator *ops*)
     (dolist (alias aliases)
-      (pushnew `(,alias ,name) *ops*))
+      (push alias *ops*)
+      (push name *ops*))
     (cond (infix `(defun ,name (,a ,b)
 		    (cond ((and (numberp ,a) (numberp ,b))
 			   (,operator ,a ,b))
@@ -55,10 +57,6 @@
 (defun base-order (operator)
   (cond ((or (eql operator '+) (eql operator '*)) '+)
 	((or (eql operator '-) (eql operator '/)) '-)))
-
-(defun operatorp (object) ; Returns function associated. 
-  (dolist (pair *ops*)
-    (when (eql (first pair) object) (return (second pair)))))
 
 (defun exprp (object)
   (or (listp object) (symbolp object)))
@@ -243,7 +241,7 @@
 (defsimple (atanh) () (a))
  
 (defun simple (operator &rest args)
-  (apply (operatorp operator) args))
+  (apply (getf *ops* operator) args))
 
 (defun simplify (expr)
   (cond ((atom expr) expr)
